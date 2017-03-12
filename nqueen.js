@@ -17,7 +17,10 @@ class NQueen {
         let q = this.currentState.getQueens();
         let queen = false;
 
+        console.log("result", this.currentState.getQueens());
+
         for (var i = 0; i < this.matrixSize; i++) {
+            const line = [];
             for (var j = 0; j < this.matrixSize; j++) {
                 for (var k = 0; k < this.matrixSize; k++) {
                     if (i === q[k].indexOfX && j === q[k].indexOfY) {
@@ -28,12 +31,13 @@ class NQueen {
                 }
 
                 if (queen) {
-                    console.log(`${temp}\t`);
+                    line.push(`${temp}`);
                     queen = false;
                 } else {
-                    console.log('*\t');
+                    line.push('*');
                 }
             }
+            console.log(line.join('  '));
         }
     }
 

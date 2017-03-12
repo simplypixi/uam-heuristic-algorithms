@@ -1,30 +1,31 @@
-/*
-	* move strategy: "first-improving"
-	* random swaps done to avoid local optima in 
-		non-improving situations
-*/
+const {range} = require('lodash');
+const NQueen = require('./nqueen.js');
+const SimulatedAnnealingState = require('./simulatedAnnealingState.js');
 
-class TabuSearch {
-	constructor(matrixSize) {
-		const vector = Array.from(new Array(matrixSize), () => 0);
-		this.matrix = Array.from(new Array(matrixSize), () => vector);
+class TabuSearch extends NQueen {
+	constructor(matrixSize, limit) {
+		super(matrixSize, 0);
 		this.bestSolution = null;
+		this.limit = limit;
+		console.log('sdfsdf', this.limit)
+		this.currentState = new SimulatedAnnealingState(matrixSize);
 		this.tabuList = [];
 	}
 
-	stoppingCondition() {
-		return false;
-	}
-
-	solve () {
-		while (!this.stoppingCondition()) {
+	solve() {
+		console.log(this.currentState);
+		while (this.limit) {
 			let candidates = [];
 			let bestCandidate = null;
 
-			for ()
+			this.limit -= 1;
 		}
 		console.log("done")
 	}
+
+/*	show() {
+		this.
+	}*/
 }
 
 module.exports = TabuSearch;

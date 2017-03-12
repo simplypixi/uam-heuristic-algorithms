@@ -1,10 +1,11 @@
-const Alg2 = require('./alg2.js');
-
-const tollerence = 0;
+const SimulatedAnnealing = require('./simulatedAnnealing.js');
+const TabuSearch = require('./tabuSearch.js');
+const matrixSize = parseInt(process.argv[2] || 4);
 
 const runSimulatedAnnealing = matrixSize => {
+	const tollerence = 0;
 	console.time(`N = ${matrixSize}`);
-	const nq = new Alg2(matrixSize,tollerence,1000);
+	const nq = new SimulatedAnnealing(matrixSize, tollerence, 100);
 	nq.solve();
 	nq.show();
 	console.timeEnd(`N = ${matrixSize}`);
@@ -13,4 +14,6 @@ const runSimulatedAnnealing = matrixSize => {
 	runSimulatedAnnealing(i);
 }*/
 
-runSimulatedAnnealing(5);
+runSimulatedAnnealing(matrixSize);
+const ts = new TabuSearch(matrixSize, 2);
+ts.solve();

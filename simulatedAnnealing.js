@@ -13,18 +13,17 @@ class SimulatedAnnealing extends NQueen {
 			let temperature, delta, probability, rand;
 
 			for (temperature = this.temperature; (temperature > 0) && (this.currentState.getCost() != 0); temperature--) {
-		    this.nextState = this.currentState.getNextState();
-		    delta = this.currentState.getCost() - this.nextState.getCost();
-		    probability = Math.exp(delta / temperature);
-		    rand = Math.random();
+			    this.nextState = this.currentState.getNextState();
+			    delta = this.currentState.getCost() - this.nextState.getCost();
+			    probability = Math.exp(delta / temperature);
+			    rand = Math.random();
 
-		    if (delta > 0) {
-		      this.currentState = this.nextState;
-		    } else if (rand <= probability) {
-		      this.currentState = this.nextState;
+			    if (delta > 0) {
+			      this.currentState = this.nextState;
+			    } else if (rand <= probability) {
+			      this.currentState = this.nextState;
+			    }
 		    }
-		   // console.log(this.temperature, temperature, this.isSolvedPosition(this.currentState))
-			}
 		}
 	}
 }
