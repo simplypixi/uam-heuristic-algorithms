@@ -63,11 +63,9 @@ class TabuSearch {
 		diagonalDown[d] -= 1
 
 		// exchange the positions 'i' and 'j'
-		console.log('before',solution, [solution[j], solution[i]], i, j)
 		var b = solution[j];
 		solution[j] = solution[i];
 		solution[i] = b;
-		console.log('after',solution, [solution[j], solution[i]], i, j)
 
 
 		// diagonals that started being attacked
@@ -147,21 +145,21 @@ class TabuSearch {
     let n = this.matrixSize;
     let bestDelta = n;      // value of best found move
     let bestI, bestJ;
-    for (var i = 0; i < n - 1; i++) {
-  		for (var j = i + 1; j < n; j++) {
-        let delta = this.evaluateMove(i,j,solution,diagonalUp,diagonalDown);
-            
-        if (tabu[i] < nIter         // move is not tabu,
+    const baseRange = range(n - 1);
+    for (var i in baseRange) {
+    	const I = parseInt(baseRange[i], 10);
+  		for (var j in range(parseInt(I + 1), n)) {
+        let delta = this.evaluateMove(I, parseInt(j, 10),solution,diagonalUp,diagonalDown);
+        if (tabu[I] < nIter         // move is not tabu,
             || ncolls + delta < bestColls) { // or satisfies aspiration criterion
             if (delta < bestDelta){
               bestDelta = delta;
-              bestI = i;
-              bestJ = j;
+              bestI = I;
+              bestJ = parseInt(j, 10);
             }
         }
       }
     }
-
     return {bestI, bestJ, bestDelta};
   }
 
@@ -178,7 +176,6 @@ class TabuSearch {
 
 		let n = this.matrixSize;
 		const {diagonalUp, diagonalDown} = this.diagonals(solution);
-		TabuSearch.show(solution);
 
 		let ncolls = this.collisions(diagonalUp) + this.collisions(diagonalDown);
 
@@ -194,7 +191,6 @@ class TabuSearch {
 
 		    // determine the best move in the current neighborhood:
 		    let {bestI: i, bestJ: j, bestDelta: delta} = this.findMove(nIter, tabu, bestColls, solution, diagonalUp, diagonalDown, ncolls)
-		    console.log('move', i, j, delta)
 		    // update the board, executing the best move:
 		    this.exchange(i, j, solution, diagonalUp, diagonalDown);
 		    ncolls += delta;
@@ -237,5 +233,5 @@ TabuSearch.show = (solution) => {
 const boardSize = process.argv[2] || 4;
 console.time(`=== Tabu search N-Queens for board ${boardSize}x${boardSize} ===`);
 const tabuSearchNQueens = new TabuSearch(boardSize);
-tabuSearchNQueens.solve(boardSize, 100);
+tabuSearchNQueens.solve(boardSize / 2, 1000);
 console.timeEnd(`=== Tabu search N-Queens for board ${boardSize}x${boardSize} ===`);
