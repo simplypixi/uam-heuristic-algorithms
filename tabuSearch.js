@@ -21,17 +21,20 @@ class TabuSearch {
 	}
 
 	diagonals(solution) {
-		const ndiag = 2 * this.matrixSize - 1; //number of diagonals on the board
+		const n = this.matrixSize;
+		const ndiag = (2 * n) - 1; //number of diagonals on the board
 
-		const diagonalUp = Array.from(Array(ndiag)).map(() => 0);
-		const diagonalDown = Array.from(Array(ndiag)).map(() => 0);
+		const diagonalUp = range(ndiag).map(() => 0);;
+		const diagonalDown = range(ndiag).map(() => 0);;
 
 		//count the number of time each diagonal is being attacked
-		for (let i = 0; i < this.matrixSize; i++) {
-			let d = i + solution[i];
+		const rang = range(n);
+		for (let i in rang) {
+			let index = rang[i];
+			let d = index + solution[index];
 			diagonalUp[d] += 1;
 
-			d = (this.matrixSize - 1) + solution[i] - i;
+			d = (n - 1) + solution[index] - index;
 			diagonalDown[d] += 1;
 		}
 
@@ -40,19 +43,20 @@ class TabuSearch {
 
 	collisions(diagonal) { // return the total number of collisions on the diagonal
 		let ncolls = 0;
-		diagonal.forEach(i => {
-			if (i > 1) {
-				ncolls += i - 1;
-			}
-		});
+
+		for(let i in diagonal) {
+			if (diagonal[i] > 1) {
+				ncolls += diagonal[i] - 1;
+			}		
+		}
 
 		return ncolls;
 	}
 
 	exchange(i, j, solution, diagonalUp, diagonalDown) {
 		// diagonals not attacked anymore
-		let d = i + solution[i];
 		let n = this.matrixSize;
+		let d = i + solution[i];
 		diagonalUp[d] -=  1
 		d = j + solution[j];
 		diagonalUp[d] -=  1
@@ -66,7 +70,6 @@ class TabuSearch {
 		var b = solution[j];
 		solution[j] = solution[i];
 		solution[i] = b;
-
 
 		// diagonals that started being attacked
 		d = i + solution[i];
@@ -88,7 +91,7 @@ class TabuSearch {
 		let delta = 0;
 		if (ni >= 2) delta -= 1;
 		if (nj >= 2) delta -= 1;
-		if (di == dj && ni == 2) delta += 1; // discounted one in excess, replace it
+		if (di === dj && ni === 2) delta += 1; // discounted one in excess, replace it
 		return delta;
 	}
 
@@ -100,7 +103,7 @@ class TabuSearch {
 	    let delta = 0;
 	    if (ni >= 1) delta += 1;
 	    if (nj >= 1) delta += 1;
-	    if (di == dj && ni == 0) delta += 1; // on the same diagonal
+	    if (di === dj && ni === 0) delta += 1; // on the same diagonal
 	    return delta;
 	}
 
@@ -148,19 +151,51 @@ class TabuSearch {
     const baseRange = range(n - 1);
     for (var i in baseRange) {
     	const I = parseInt(baseRange[i], 10);
-  		for (var j in range(parseInt(I + 1), n)) {
-        let delta = this.evaluateMove(I, parseInt(j, 10),solution,diagonalUp,diagonalDown);
-        if (tabu[I] < nIter         // move is not tabu,
-            || ncolls + delta < bestColls) { // or satisfies aspiration criterion
+    	const secondRange = range(I + 1, n);
+  		for (var j in secondRange) {
+  			const J = parseInt(secondRange[j], 10);
+        let delta = this.evaluateMove(I, J,solution,diagonalUp,diagonalDown);
+
+        if ((tabu[I] < nIter) || (ncolls + delta < bestColls)) { //move is not tabu or satisfies aspiration criterion
             if (delta < bestDelta){
               bestDelta = delta;
               bestI = I;
-              bestJ = parseInt(j, 10);
+              bestJ = J;
             }
         }
       }
     }
     return {bestI, bestJ, bestDelta};
+  }
+
+  search(solution, maxIter) {
+  	/*Local search: find local optimum starting from sol.
+  	Returns number of collisions of the local optimum.
+  	*/
+
+  	let n = this.matrixSize;
+  	let {diagonalUp, diagonalDown} = this.diagonals(solution);
+  	let ncolls = this.collisions(diagonalUp) + this.collisions(diagonalDown);
+  	let nIter = 0;
+  	while (true) {
+  	    nIter += 1;
+
+  	    let improved = false;
+	      for (var i = 0; i < n - 1; i++) {
+	    		for (var j = i + 1; j < n; j++) {
+	            let delta = this.evaluateMove(i,j,solution,diagonalUp,diagonalDown)
+	            if (delta < 0){
+	                improved = true;
+
+	                // execute the improvement: update the board
+	                this.exchange(i, j, solution, diagonalUp, diagonalDown)
+	                ncolls += delta;
+	            }
+	        }
+	      }
+  	    if (!improved)
+  	       return ncolls;
+  	}
   }
 
 	solve(tabuLength, maxIter, solution = this.solution) {
@@ -174,26 +209,36 @@ class TabuSearch {
 		Returns number of collisions of the local optimum.
 		*/
 
+/*		let ncolls = this.search(solution);
+
+		if (!ncolls) {
+			TabuSearch.show(solution);
+			return;
+		}
+*/
 		let n = this.matrixSize;
 		const {diagonalUp, diagonalDown} = this.diagonals(solution);
 
 		let ncolls = this.collisions(diagonalUp) + this.collisions(diagonalDown);
 
 		let nIter = 0;          // iteration count
-		let iterBest = 0;       // iteration at which best solutionution was found
 		let best = clone(solution);    // copy of the best solution found
 		let bestColls = ncolls;
-		// tabu information (iteration until which move from 'i' is forbidden):
-		const tabu = Array.from(Array(n)).map(() => 0);
 
+		// tabu information (iteration until which move from 'i' is forbidden):
+		let tabu = range(n).map(() => 0);
 		while ((nIter < maxIter) && (bestColls != 0)){
 		    nIter += 1;
 
-		    // determine the best move in the current neighborhood:
-		    let {bestI: i, bestJ: j, bestDelta: delta} = this.findMove(nIter, tabu, bestColls, solution, diagonalUp, diagonalDown, ncolls)
+		    // determine the best move i
+		    //n the current neighborhood:
+		    let {bestI: i, bestJ: j, bestDelta: delta} = this.findMove(nIter, tabu, bestColls, solution, diagonalUp, diagonalDown, ncolls);
+		    if (typeof i === 'undefined') {
+		    	continue;
+		    }
 		    // update the board, executing the best move:
 		    this.exchange(i, j, solution, diagonalUp, diagonalDown);
-		    ncolls += delta;
+		    ncolls += parseInt(delta, 10);
 
 		    // update the tabu structure:
 		    // moves involving i will be tabu for 'tabuLength' iterations
@@ -201,7 +246,6 @@ class TabuSearch {
 
 		    // check if we improved the best:
 		    if (ncolls < bestColls){
-		        iterBest = nIter;
 		        best = clone(solution);
 		        bestColls = ncolls;
 		    }
@@ -230,8 +274,8 @@ TabuSearch.show = (solution) => {
 	}
 }
 
-const boardSize = process.argv[2] || 4;
+const boardSize = parseInt(process.argv[2] || 4, 10);
 console.time(`=== Tabu search N-Queens for board ${boardSize}x${boardSize} ===`);
 const tabuSearchNQueens = new TabuSearch(boardSize);
-tabuSearchNQueens.solve(boardSize / 2, 1000);
+tabuSearchNQueens.solve(boardSize, 100);
 console.timeEnd(`=== Tabu search N-Queens for board ${boardSize}x${boardSize} ===`);
