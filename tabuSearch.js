@@ -223,10 +223,10 @@ TabuSearch.show = (solution) => {
 			if (solution[i] === j) {
 				line.push(j + 1);
 			} else {
-				line.push('.')
+				line.push('*')
 			}
 		}
-		console.log(line.join(' '));
+		console.log(line.join('  '));
 	}
 }
 

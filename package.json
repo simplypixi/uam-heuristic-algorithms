@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "tabu-search": "node ./tabuSearch",
+    "sim-ann": "node ./simulatedAnnealing.js",
+    "hill-climb": "node ./knapsackProblem"
   },
   "repository": {
     "type": "git",

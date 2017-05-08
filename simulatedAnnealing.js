@@ -28,4 +28,10 @@ class SimulatedAnnealing extends NQueen {
 	}
 }
 
-module.exports = SimulatedAnnealing;
+const matrixSize = parseInt(process.argv[2] || 4);
+const tollerence = 0;
+console.time(`SimulatedAnnealing for ${matrixSize}x${matrixSize}`);
+const nq = new SimulatedAnnealing(matrixSize, tollerence, 100);
+nq.solve();
+nq.show();
+console.timeEnd(`SimulatedAnnealing for ${matrixSize}x${matrixSize}`);
