@@ -45,7 +45,10 @@ class Knapsack {
 };
 
 console.time('Knapsack problem searching time');
-const knapsack = new Knapsack(10, 20);
+const capacity = parseInt(process.argv[3] || 20, 10);
+const elementNo = parseInt(process.argv[2] || 10, 10);
+
+const knapsack = new Knapsack(elementNo, capacity);
 
 console.log('\n=== Initial data ===');
 console.log('Max capacity:', knapsack.capacity);
