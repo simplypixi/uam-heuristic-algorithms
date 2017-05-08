@@ -165,38 +165,6 @@ class TabuSearch {
     return {bestI, bestJ, bestDelta};
   }
 
-  localSearch(solution, maxIter) {
-  	/*Local search: find local optimum starting from sol.
-  	Returns number of collisions of the local optimum.
-  	*/
-
-  	let n = this.matrixSize;
-  	let {diagonalUp, diagonalDown} = this.diagonals(solution);
-  	let ncolls = this.collisions(diagonalUp) + this.collisions(diagonalDown);
-  	let nIter = 0;
-  	while (nIter < maxIter) {
-  	    nIter += 1;
-
-  	    let improved = false;
-	      for (var i = 0; i < n - 1; i++) {
-	    		for (var j = i + 1; i < n; j++) {
-	            let delta = this.evaluateMove(i,j,solution,diagonalUp,diagonalDown)
-	            if (delta < 0){
-	                improved = true;
-
-	                // execute the improvement: update the board
-	                this.exchange(i, j, solution, diagonalUp, diagonalDown)
-	                ncolls += delta;
-	            }
-	        }
-	      }
-  	    if (!improved)
-  	       return ncolls;
-  	}
-  }
-
-
-
 	solve(tabuLength, maxIter, solution = this.solution) {
 		/*Tabu search: find solution starting search from sol.
 
