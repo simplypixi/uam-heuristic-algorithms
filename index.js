@@ -9,7 +9,7 @@ const runSimulatedAnnealing = matrixSize => {
 	nq.solve();
 	nq.show();
 	console.timeEnd(`N = ${matrixSize}`);
-}
+};
 /*for (let i = 4; i < 20; i++) {
 	runSimulatedAnnealing(i);
 }*/
