@@ -11,7 +11,6 @@ class SimulatedAnnealing extends NQueen {
 	solve () {
 		while(!this.isSolvedPosition(this.currentState)) {
 			let temperature, delta, probability, rand;
-
 			for (temperature = this.temperature; (temperature > 0) && (this.currentState.getCost() != 0); temperature--) {
 			    this.nextState = this.currentState.getNextState();
 			    delta = this.currentState.getCost() - this.nextState.getCost();
@@ -29,9 +28,10 @@ class SimulatedAnnealing extends NQueen {
 }
 
 const matrixSize = parseInt(process.argv[2] || 4);
+console.time(`=== SimulatedAnnealing for  board ${matrixSize}x${matrixSize} ===`);
 const tollerence = 0;
 console.time(`SimulatedAnnealing for ${matrixSize}x${matrixSize}`);
 const nq = new SimulatedAnnealing(matrixSize, tollerence, 100);
 nq.solve();
 nq.show();
-console.timeEnd(`SimulatedAnnealing for ${matrixSize}x${matrixSize}`);
+console.timeEnd(`=== SimulatedAnnealing for  board ${matrixSize}x${matrixSize} ===`);

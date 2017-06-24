@@ -12,7 +12,6 @@ class NQueen {
 	}
 
 	show() {
-		console.log(`Total cost of ${this.currentState.getCost()}`);
 		let temp = 0;
 		let q = this.currentState.getQueens();
 		let queen = false;

@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "tabu-search": "node ./tabuSearch",
-    "sim-ann": "node ./simulatedAnnealing.js",
+    "tabu-search": "node ./nQueenTabuSearch",
+    "sim-ann": "node ./nQueenSimulatedAnnealing",
     "hill-climb": "node ./knapsackProblem"
   },
   "repository": {

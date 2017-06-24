@@ -1,6 +1,4 @@
 const {range, clone} = require('lodash');
-const NQueen = require('./nqueen.js');
-const SimulatedAnnealingState = require('./simulatedAnnealingState.js');
 
 const shuffle = (a) => {
   for (let i = a.length; i; i--) {
